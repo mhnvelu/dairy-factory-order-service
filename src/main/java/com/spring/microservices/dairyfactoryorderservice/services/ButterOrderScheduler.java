@@ -11,10 +11,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -25,6 +22,8 @@ public class ButterOrderScheduler {
     private final ButterOrderRepository butterOrderRepository;
     private final List<String> butterUpcs = new ArrayList<>(3);
 
+    private final Map<String, UUID> butterUids = new HashMap<>();
+
     public ButterOrderScheduler(CustomerRepository customerRepository, ButterOrderService butterOrderService,
                                 ButterOrderRepository butterOrderRepository) {
         this.customerRepository = customerRepository;
@@ -34,6 +33,11 @@ public class ButterOrderScheduler {
         butterUpcs.add(ButterOrderBootStrap.BUTTER_1_UPC);
         butterUpcs.add(ButterOrderBootStrap.BUTTER_2_UPC);
         butterUpcs.add(ButterOrderBootStrap.BUTTER_3_UPC);
+
+        butterUids.put(ButterOrderBootStrap.BUTTER_1_UPC, ButterOrderBootStrap.BUTTER_1_UUID);
+        butterUids.put(ButterOrderBootStrap.BUTTER_2_UPC, ButterOrderBootStrap.BUTTER_2_UUID);
+        butterUids.put(ButterOrderBootStrap.BUTTER_3_UPC, ButterOrderBootStrap.BUTTER_3_UUID);
+
     }
 
     @Transactional
@@ -54,7 +58,7 @@ public class ButterOrderScheduler {
         String butterToOrder = getRandomButterUpc();
 
         ButterOrderLineDto butterOrderLineDto = ButterOrderLineDto.builder()
-                .upc(butterToOrder)
+                .upc(butterToOrder).butterId(butterUids.get(butterToOrder))
                 .orderQuantity(new Random().nextInt(6)) //todo externalize value to property
                 .build();
 
