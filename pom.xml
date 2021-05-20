@@ -15,4 +15,11 @@
     <name>dairy-factory-order-service</name>
     <description>Spring Boot Microservices with Spring Cloud</description>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-artemis</artifactId>
+        </dependency>
+    </dependencies>
+
 </project>
