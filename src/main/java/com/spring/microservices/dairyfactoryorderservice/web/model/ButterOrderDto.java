@@ -17,12 +17,12 @@ public class ButterOrderDto extends BaseItem {
     private UUID customerId;
     private String customerRef;
     private List<ButterOrderLineDto> butterOrderLines;
-    private OrderStatusEnum orderStatus;
+    private ButterOrderStatusEnum orderStatus;
     private String orderStatusCallbackUrl;
 
     @Builder
     public ButterOrderDto(UUID id, Integer version, OffsetDateTime createdDate, OffsetDateTime lastModifiedDate, UUID customerId, List<ButterOrderLineDto> butterOrderLines,
-                          OrderStatusEnum orderStatus, String orderStatusCallbackUrl, String customerRef) {
+                          ButterOrderStatusEnum orderStatus, String orderStatusCallbackUrl, String customerRef) {
         super(id, version, createdDate, lastModifiedDate);
         this.customerId = customerId;
         this.butterOrderLines = butterOrderLines;
