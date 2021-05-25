@@ -1,8 +1,8 @@
 package com.spring.microservices.dairyfactoryorderservice.web.controllers;
 
 import com.spring.microservices.dairyfactoryorderservice.services.ButterOrderService;
-import com.spring.microservices.dairyfactoryorderservice.web.model.ButterOrderDto;
-import com.spring.microservices.dairyfactoryorderservice.web.model.ButterOrderPagedList;
+import com.spring.microservices.model.ButterOrderDto;
+import com.spring.microservices.model.ButterOrderPagedList;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;

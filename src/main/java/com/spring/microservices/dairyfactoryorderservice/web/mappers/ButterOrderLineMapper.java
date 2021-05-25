@@ -1,7 +1,7 @@
 package com.spring.microservices.dairyfactoryorderservice.web.mappers;
 
 import com.spring.microservices.dairyfactoryorderservice.domain.ButterOrderLine;
-import com.spring.microservices.dairyfactoryorderservice.web.model.ButterOrderLineDto;
+import com.spring.microservices.model.ButterOrderLineDto;
 import org.mapstruct.DecoratedWith;
 import org.mapstruct.Mapper;
 

@@ -1,4 +1,4 @@
-package com.spring.microservices.dairyfactoryorderservice.web.model;
+package com.spring.microservices.model;
 
 public enum ButterOrderStatusEnum {
     NEW, VALIDATED, VALIDATION_EXCEPTION, ALLOCATED, ALLOCATION_ERROR, PENDING_INVENTORY,

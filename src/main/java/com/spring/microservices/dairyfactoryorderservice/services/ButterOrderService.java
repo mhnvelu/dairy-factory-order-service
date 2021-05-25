@@ -1,7 +1,7 @@
 package com.spring.microservices.dairyfactoryorderservice.services;
 
-import com.spring.microservices.dairyfactoryorderservice.web.model.ButterOrderDto;
-import com.spring.microservices.dairyfactoryorderservice.web.model.ButterOrderPagedList;
+import com.spring.microservices.model.ButterOrderDto;
+import com.spring.microservices.model.ButterOrderPagedList;
 import org.springframework.data.domain.Pageable;
 
 import java.util.UUID;

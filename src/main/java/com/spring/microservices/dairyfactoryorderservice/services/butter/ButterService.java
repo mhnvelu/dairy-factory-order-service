@@ -1,7 +1,5 @@
 package com.spring.microservices.dairyfactoryorderservice.services.butter;
 
-import com.spring.microservices.dairyfactoryorderservice.web.model.ButterOrderDto;
-
 import java.util.Optional;
 import java.util.UUID;
 

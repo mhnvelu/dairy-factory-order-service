@@ -1,4 +1,4 @@
-package com.spring.microservices.dairyfactoryorderservice.web.model;
+package com.spring.microservices.model;
 
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;

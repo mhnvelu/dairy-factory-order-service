@@ -4,8 +4,8 @@ import com.spring.microservices.dairyfactoryorderservice.bootstrap.ButterOrderBo
 import com.spring.microservices.dairyfactoryorderservice.domain.Customer;
 import com.spring.microservices.dairyfactoryorderservice.repositories.ButterOrderRepository;
 import com.spring.microservices.dairyfactoryorderservice.repositories.CustomerRepository;
-import com.spring.microservices.dairyfactoryorderservice.web.model.ButterOrderDto;
-import com.spring.microservices.dairyfactoryorderservice.web.model.ButterOrderLineDto;
+import com.spring.microservices.model.ButterOrderDto;
+import com.spring.microservices.model.ButterOrderLineDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;

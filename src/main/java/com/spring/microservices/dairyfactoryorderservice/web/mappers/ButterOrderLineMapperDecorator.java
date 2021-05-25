@@ -3,7 +3,7 @@ package com.spring.microservices.dairyfactoryorderservice.web.mappers;
 import com.spring.microservices.dairyfactoryorderservice.domain.ButterOrderLine;
 import com.spring.microservices.dairyfactoryorderservice.services.butter.ButterDtoV2;
 import com.spring.microservices.dairyfactoryorderservice.services.butter.ButterService;
-import com.spring.microservices.dairyfactoryorderservice.web.model.ButterOrderLineDto;
+import com.spring.microservices.model.ButterOrderLineDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
