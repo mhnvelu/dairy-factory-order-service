@@ -28,12 +28,12 @@ public class ButterOrder extends BaseEntity {
     @OneToMany(mappedBy = "butterOrder", cascade = CascadeType.ALL)
     @Fetch(FetchMode.JOIN)
     private Set<ButterOrderLine> butterOrderLines;
-    private OrderStatusEnum orderStatus = OrderStatusEnum.NEW;
+    private ButterOrderStatusEnum orderStatus = ButterOrderStatusEnum.NEW;
     private String orderStatusCallbackUrl;
 
     @Builder
     public ButterOrder(UUID id, Long version, Timestamp createdDate, Timestamp lastModifiedDate, String customerRef, Customer customer,
-                       Set<ButterOrderLine> butterOrderLines, OrderStatusEnum orderStatus,
+                       Set<ButterOrderLine> butterOrderLines, ButterOrderStatusEnum orderStatus,
                        String orderStatusCallbackUrl) {
         super(id, version, createdDate, lastModifiedDate);
         this.customerRef = customerRef;

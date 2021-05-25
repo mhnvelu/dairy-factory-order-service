@@ -2,7 +2,7 @@ package com.spring.microservices.dairyfactoryorderservice.services;
 
 import com.spring.microservices.dairyfactoryorderservice.domain.ButterOrder;
 import com.spring.microservices.dairyfactoryorderservice.domain.Customer;
-import com.spring.microservices.dairyfactoryorderservice.domain.OrderStatusEnum;
+import com.spring.microservices.dairyfactoryorderservice.domain.ButterOrderStatusEnum;
 import com.spring.microservices.dairyfactoryorderservice.repositories.ButterOrderRepository;
 import com.spring.microservices.dairyfactoryorderservice.repositories.CustomerRepository;
 import com.spring.microservices.dairyfactoryorderservice.web.mappers.ButterOrderMapper;
@@ -67,7 +67,7 @@ public class ButterOrderServiceImpl implements ButterOrderService {
             ButterOrder butterOrder = butterOrderMapper.dtoToButterOrder(butterOrderDto);
             butterOrder.setId(null); //should not be set by outside client
             butterOrder.setCustomer(customerOptional.get());
-            butterOrder.setOrderStatus(OrderStatusEnum.NEW);
+            butterOrder.setOrderStatus(ButterOrderStatusEnum.NEW);
 
             butterOrder.getButterOrderLines().forEach(line -> line.setButterOrder(butterOrder));
 
@@ -89,7 +89,7 @@ public class ButterOrderServiceImpl implements ButterOrderService {
     @Override
     public void pickupOrder(UUID customerId, UUID orderId) {
         ButterOrder butterOrder = getOrder(customerId, orderId);
-        butterOrder.setOrderStatus(OrderStatusEnum.PICKED_UP);
+        butterOrder.setOrderStatus(ButterOrderStatusEnum.PICKED_UP);
         butterOrderRepository.save(butterOrder);
     }
 
