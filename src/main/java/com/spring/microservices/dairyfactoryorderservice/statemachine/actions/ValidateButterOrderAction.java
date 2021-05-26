@@ -7,7 +7,7 @@ import com.spring.microservices.dairyfactoryorderservice.repositories.ButterOrde
 import com.spring.microservices.dairyfactoryorderservice.services.ButterOrderManagerImpl;
 import com.spring.microservices.dairyfactoryorderservice.web.mappers.ButterOrderMapper;
 import com.spring.microservices.model.ButterOrderStatusEnum;
-import com.spring.microservices.model.events.ValidateButterOrderEvent;
+import com.spring.microservices.model.events.ValidateButterOrderRequestEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jms.core.JmsTemplate;
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 import java.util.UUID;
 
 /*
-ValidateButterOrderEvent is send to queue BUTTER_ORDER_VALIDATE_QUEUE. Inventory service has to receive and process it.
+ValidateButterOrderRequestEvent is send to queue BUTTER_ORDER_VALIDATE_QUEUE. Inventory service has to receive and process it.
  */
 
 @Component
@@ -34,10 +34,10 @@ public class ValidateButterOrderAction implements Action<ButterOrderStatusEnum, 
     public void execute(StateContext<ButterOrderStatusEnum, ButterOrderEventEnum> context) {
         String orderId = (String) context.getMessageHeaders().getOrDefault(ButterOrderManagerImpl.BUTTER_ORDER_ID_HEADER, "");
         ButterOrder butterOrder = butterOrderRepository.getOne(UUID.fromString(orderId));
-        log.info("Sending ValidateButterOrderEvent to BUTTER_ORDER_VALIDATE_QUEUE for Butter Order : " + orderId);
-        jmsTemplate.convertAndSend(JmsConfig.BUTTER_ORDER_VALIDATE_QUEUE,
-                                   ValidateButterOrderEvent.builder()
+        log.info("Sending ValidateButterOrderRequestEvent to BUTTER_ORDER_VALIDATE_QUEUE for Butter Order : " + orderId);
+        jmsTemplate.convertAndSend(JmsConfig.BUTTER_ORDER_VALIDATE_REQUEST_QUEUE,
+                                   ValidateButterOrderRequestEvent.builder()
                                            .butterOrderDto(butterOrderMapper.butterOrderToDto(butterOrder)).build());
-        log.info("Sent ValidateButterOrderEvent to BUTTER_ORDER_VALIDATE_QUEUE for Butter Order : " + orderId);
+        log.info("Sent ValidateButterOrderRequestEvent to BUTTER_ORDER_VALIDATE_QUEUE for Butter Order : " + orderId);
     }
 }

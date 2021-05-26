@@ -1,6 +1,6 @@
 package com.spring.microservices.dairyfactoryorderservice.services.butter;
 
-import com.spring.microservices.model.ButterDtoV2;
+import com.spring.microservices.model.v2.ButterDtoV2;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Service;

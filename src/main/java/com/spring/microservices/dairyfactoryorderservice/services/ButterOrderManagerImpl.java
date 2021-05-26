@@ -15,6 +15,8 @@ import org.springframework.statemachine.support.DefaultStateMachineContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -35,6 +37,16 @@ public class ButterOrderManagerImpl implements ButterOrderManager {
         ButterOrder savedButterOrder = butterOrderRepository.save(butterOrder);
         sendButterOrderEvent(savedButterOrder, ButterOrderEventEnum.VALIDATE_ORDER);
         return savedButterOrder;
+    }
+
+    @Override
+    public void processValidateButterOrderResponseEvent(UUID orderId, boolean valid) {
+        ButterOrder butterOrder = butterOrderRepository.getOne(orderId);
+        if (valid) {
+            sendButterOrderEvent(butterOrder, ButterOrderEventEnum.VALIDATION_PASSED);
+        } else {
+            sendButterOrderEvent(butterOrder, ButterOrderEventEnum.VALIDATION_FAILED);
+        }
     }
 
     private void sendButterOrderEvent(ButterOrder butterOrder, ButterOrderEventEnum butterOrderEventEnum) {

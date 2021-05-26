@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Data
 @Builder
-public class ValidateButterOrderEvent {
+public class ValidateButterOrderRequestEvent {
 
     private final ButterOrderDto butterOrderDto;
 }
