@@ -2,7 +2,6 @@ package com.spring.microservices.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.spring.microservices.dairyfactoryorderservice.services.butter.ButterFlavourEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

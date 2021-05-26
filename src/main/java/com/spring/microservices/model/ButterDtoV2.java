@@ -1,4 +1,4 @@
-package com.spring.microservices.dairyfactoryorderservice.services.butter;
+package com.spring.microservices.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
