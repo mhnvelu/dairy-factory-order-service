@@ -1,5 +1,6 @@
 package com.spring.microservices.dairyfactoryorderservice.domain;
 
+import com.spring.microservices.model.ButterOrderStatusEnum;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

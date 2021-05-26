@@ -1,7 +1,5 @@
 package com.spring.microservices.dairyfactoryorderservice.statemachine;
 
-import com.spring.microservices.dairyfactoryorderservice.domain.ButterOrderEventEnum;
-import com.spring.microservices.dairyfactoryorderservice.domain.ButterOrderStatusEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.statemachine.config.EnableStateMachineFactory;

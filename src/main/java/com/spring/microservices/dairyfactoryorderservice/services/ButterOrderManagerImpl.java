@@ -2,8 +2,9 @@ package com.spring.microservices.dairyfactoryorderservice.services;
 
 import com.spring.microservices.dairyfactoryorderservice.domain.ButterOrder;
 import com.spring.microservices.dairyfactoryorderservice.domain.ButterOrderEventEnum;
-import com.spring.microservices.dairyfactoryorderservice.domain.ButterOrderStatusEnum;
 import com.spring.microservices.dairyfactoryorderservice.repositories.ButterOrderRepository;
+import com.spring.microservices.dairyfactoryorderservice.statemachine.ButterOrderStateMachineInterceptorAdapter;
+import com.spring.microservices.model.ButterOrderStatusEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
@@ -19,8 +20,11 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ButterOrderManagerImpl implements ButterOrderManager {
 
+    public static final String BUTTER_ORDER_ID_HEADER = "butter-order-id";
+
     private final ButterOrderRepository butterOrderRepository;
     private final StateMachineFactory<ButterOrderStatusEnum, ButterOrderEventEnum> stateMachineFactory;
+    private final ButterOrderStateMachineInterceptorAdapter butterOrderStateMachineInterceptorAdapter;
 
     @Transactional
     @Override
@@ -36,7 +40,8 @@ public class ButterOrderManagerImpl implements ButterOrderManager {
     private void sendButterOrderEvent(ButterOrder butterOrder, ButterOrderEventEnum butterOrderEventEnum) {
 
         StateMachine<ButterOrderStatusEnum, ButterOrderEventEnum> stateMachine = buildStateMachine(butterOrder);
-        Message message = MessageBuilder.withPayload(butterOrderEventEnum).build();
+        Message message = MessageBuilder.withPayload(butterOrderEventEnum).setHeader(BUTTER_ORDER_ID_HEADER,
+                                                                                     butterOrder.getId()).build();
         stateMachine.sendEvent(message);
 
     }
@@ -49,6 +54,7 @@ public class ButterOrderManagerImpl implements ButterOrderManager {
         stateMachine.stop();
 
         stateMachine.getStateMachineAccessor().doWithAllRegions(sma -> {
+            sma.addStateMachineInterceptor(butterOrderStateMachineInterceptorAdapter);
             sma.resetStateMachine(new DefaultStateMachineContext<>(butterOrder.getOrderStatus(), null, null, null));
         });
 

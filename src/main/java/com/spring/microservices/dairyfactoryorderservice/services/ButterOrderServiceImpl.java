@@ -2,7 +2,6 @@ package com.spring.microservices.dairyfactoryorderservice.services;
 
 import com.spring.microservices.dairyfactoryorderservice.domain.ButterOrder;
 import com.spring.microservices.dairyfactoryorderservice.domain.Customer;
-import com.spring.microservices.dairyfactoryorderservice.domain.ButterOrderStatusEnum;
 import com.spring.microservices.dairyfactoryorderservice.repositories.ButterOrderRepository;
 import com.spring.microservices.dairyfactoryorderservice.repositories.CustomerRepository;
 import com.spring.microservices.dairyfactoryorderservice.web.mappers.ButterOrderMapper;

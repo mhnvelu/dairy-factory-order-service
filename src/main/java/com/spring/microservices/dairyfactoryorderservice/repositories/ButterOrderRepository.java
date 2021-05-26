@@ -2,7 +2,6 @@ package com.spring.microservices.dairyfactoryorderservice.repositories;
 
 import com.spring.microservices.dairyfactoryorderservice.domain.ButterOrder;
 import com.spring.microservices.dairyfactoryorderservice.domain.Customer;
-import com.spring.microservices.dairyfactoryorderservice.domain.ButterOrderStatusEnum;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
