@@ -1,4 +1,4 @@
-package com.spring.microservices.dairyfactoryorderservice.services.butter;
+package com.spring.microservices.dairyfactoryorderservice.services.listeners;
 
 import com.spring.microservices.dairyfactoryorderservice.config.JmsConfig;
 import com.spring.microservices.dairyfactoryorderservice.services.ButterOrderManager;
@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -18,7 +17,6 @@ public class ValidateButterOrderResponseEventListener {
 
     private final ButterOrderManager butterOrderManager;
 
-    @Transactional
     @JmsListener(destination = JmsConfig.BUTTER_ORDER_VALIDATE_RESPONSE_QUEUE)
     public void listenValidateButterOrderResponseEvent(ValidateButterOrderResponseEvent validateButterOrderResponseEvent) {
         final UUID orderId = validateButterOrderResponseEvent.getOrderId();

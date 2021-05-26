@@ -1,6 +1,7 @@
 package com.spring.microservices.dairyfactoryorderservice.statemachine;
 
 import com.spring.microservices.dairyfactoryorderservice.domain.ButterOrderEventEnum;
+import com.spring.microservices.dairyfactoryorderservice.statemachine.actions.AllocateButterOrderAction;
 import com.spring.microservices.dairyfactoryorderservice.statemachine.actions.ValidateButterOrderAction;
 import com.spring.microservices.model.ButterOrderStatusEnum;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import java.util.EnumSet;
 public class ButterOrderStateMachineConfig extends StateMachineConfigurerAdapter<ButterOrderStatusEnum, ButterOrderEventEnum> {
 
     private final ValidateButterOrderAction validateButterOrderAction;
+    private final AllocateButterOrderAction allocateButterOrderAction;
 
     @Override
     public void configure(StateMachineStateConfigurer<ButterOrderStatusEnum, ButterOrderEventEnum> states) throws Exception {
@@ -42,6 +44,8 @@ public class ButterOrderStateMachineConfig extends StateMachineConfigurerAdapter
                 .and().withExternal().source(ButterOrderStatusEnum.NEW).target(ButterOrderStatusEnum.VALIDATED)
                 .event(ButterOrderEventEnum.VALIDATION_PASSED)
                 .and().withExternal().source(ButterOrderStatusEnum.NEW).target(ButterOrderStatusEnum.VALIDATION_EXCEPTION)
-                .event(ButterOrderEventEnum.VALIDATION_FAILED);
+                .event(ButterOrderEventEnum.VALIDATION_FAILED)
+                .and().withExternal().source(ButterOrderStatusEnum.VALIDATED).target(ButterOrderStatusEnum.ALLOCATION_PENDING)
+                .event(ButterOrderEventEnum.ALLOCATE_ORDER).action(allocateButterOrderAction);
     }
 }

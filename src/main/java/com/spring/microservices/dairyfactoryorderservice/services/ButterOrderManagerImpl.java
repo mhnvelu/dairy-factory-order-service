@@ -44,6 +44,8 @@ public class ButterOrderManagerImpl implements ButterOrderManager {
         ButterOrder butterOrder = butterOrderRepository.getOne(orderId);
         if (valid) {
             sendButterOrderEvent(butterOrder, ButterOrderEventEnum.VALIDATION_PASSED);
+            ButterOrder validatedButterOrder = butterOrderRepository.getOne(orderId);
+            sendButterOrderEvent(validatedButterOrder, ButterOrderEventEnum.ALLOCATE_ORDER);
         } else {
             sendButterOrderEvent(butterOrder, ButterOrderEventEnum.VALIDATION_FAILED);
         }
