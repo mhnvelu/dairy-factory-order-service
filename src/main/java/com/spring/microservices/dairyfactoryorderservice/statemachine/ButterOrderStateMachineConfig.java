@@ -1,5 +1,7 @@
 package com.spring.microservices.dairyfactoryorderservice.statemachine;
 
+import com.spring.microservices.dairyfactoryorderservice.domain.ButterOrderEventEnum;
+import com.spring.microservices.model.ButterOrderStatusEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.statemachine.config.EnableStateMachineFactory;
@@ -29,7 +31,7 @@ public class ButterOrderStateMachineConfig extends StateMachineConfigurerAdapter
     @Override
     public void configure(StateMachineTransitionConfigurer<ButterOrderStatusEnum, ButterOrderEventEnum> transitions)
             throws Exception {
-        transitions.withExternal().source(ButterOrderStatusEnum.NEW).target(ButterOrderStatusEnum.NEW)
+        transitions.withExternal().source(ButterOrderStatusEnum.NEW).target(ButterOrderStatusEnum.VALIDATION_PENDING)
                 .event(ButterOrderEventEnum.VALIDATE_ORDER)
                 // TODO add validation action here
                 .and().withExternal().source(ButterOrderStatusEnum.NEW).target(ButterOrderStatusEnum.VALIDATED)
