@@ -1,7 +1,9 @@
 package com.spring.microservices.dairyfactoryorderservice.statemachine;
 
 import com.spring.microservices.dairyfactoryorderservice.domain.ButterOrderEventEnum;
+import com.spring.microservices.dairyfactoryorderservice.statemachine.actions.ValidateButterOrderAction;
 import com.spring.microservices.model.ButterOrderStatusEnum;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.statemachine.config.EnableStateMachineFactory;
@@ -14,7 +16,11 @@ import java.util.EnumSet;
 @Slf4j
 @Configuration
 @EnableStateMachineFactory
+@RequiredArgsConstructor
 public class ButterOrderStateMachineConfig extends StateMachineConfigurerAdapter<ButterOrderStatusEnum, ButterOrderEventEnum> {
+
+    private final ValidateButterOrderAction validateButterOrderAction;
+
     @Override
     public void configure(StateMachineStateConfigurer<ButterOrderStatusEnum, ButterOrderEventEnum> states) throws Exception {
         states.withStates()
@@ -32,8 +38,7 @@ public class ButterOrderStateMachineConfig extends StateMachineConfigurerAdapter
     public void configure(StateMachineTransitionConfigurer<ButterOrderStatusEnum, ButterOrderEventEnum> transitions)
             throws Exception {
         transitions.withExternal().source(ButterOrderStatusEnum.NEW).target(ButterOrderStatusEnum.VALIDATION_PENDING)
-                .event(ButterOrderEventEnum.VALIDATE_ORDER)
-                // TODO add validation action here
+                .event(ButterOrderEventEnum.VALIDATE_ORDER).action(validateButterOrderAction)
                 .and().withExternal().source(ButterOrderStatusEnum.NEW).target(ButterOrderStatusEnum.VALIDATED)
                 .event(ButterOrderEventEnum.VALIDATION_PASSED)
                 .and().withExternal().source(ButterOrderStatusEnum.NEW).target(ButterOrderStatusEnum.VALIDATION_EXCEPTION)

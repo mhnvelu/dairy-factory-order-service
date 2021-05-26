@@ -7,6 +7,7 @@ import com.spring.microservices.dairyfactoryorderservice.repositories.CustomerRe
 import com.spring.microservices.dairyfactoryorderservice.web.mappers.ButterOrderMapper;
 import com.spring.microservices.model.ButterOrderDto;
 import com.spring.microservices.model.ButterOrderPagedList;
+import com.spring.microservices.model.ButterOrderStatusEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
