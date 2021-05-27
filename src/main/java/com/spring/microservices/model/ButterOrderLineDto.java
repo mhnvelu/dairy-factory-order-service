@@ -39,4 +39,5 @@ public class ButterOrderLineDto {
     private BigDecimal price;
     private Integer orderQuantity = 0;
 
+    private Integer quantityAllocated;
 }

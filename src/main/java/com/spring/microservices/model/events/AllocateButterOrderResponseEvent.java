@@ -1,8 +1,10 @@
 package com.spring.microservices.model.events;
 
-import lombok.*;
-
-import java.util.UUID;
+import com.spring.microservices.model.ButterOrderDto;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -10,6 +12,7 @@ import java.util.UUID;
 @Builder
 public class AllocateButterOrderResponseEvent {
 
-    private UUID orderId;
-    private boolean allocated;
+    private ButterOrderDto butterOrderDto;
+    private boolean allocationError = false;
+    private boolean pendingInventory = false;
 }

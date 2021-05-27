@@ -46,6 +46,16 @@ public class ButterOrderStateMachineConfig extends StateMachineConfigurerAdapter
                 .and().withExternal().source(ButterOrderStatusEnum.NEW).target(ButterOrderStatusEnum.VALIDATION_EXCEPTION)
                 .event(ButterOrderEventEnum.VALIDATION_FAILED)
                 .and().withExternal().source(ButterOrderStatusEnum.VALIDATED).target(ButterOrderStatusEnum.ALLOCATION_PENDING)
-                .event(ButterOrderEventEnum.ALLOCATE_ORDER).action(allocateButterOrderAction);
+                .event(ButterOrderEventEnum.ALLOCATE_ORDER).action(allocateButterOrderAction)
+                .and().withExternal().source(ButterOrderStatusEnum.ALLOCATION_PENDING).target(ButterOrderStatusEnum.ALLOCATED)
+                .event(ButterOrderEventEnum.ALLOCATION_SUCCESS)
+                .and().withExternal().source(ButterOrderStatusEnum.ALLOCATION_PENDING)
+                .target(ButterOrderStatusEnum.ALLOCATION_ERROR)
+                .event(ButterOrderEventEnum.ALLOCATION_FAILED)
+                .and().withExternal().source(ButterOrderStatusEnum.ALLOCATION_PENDING)
+                .target(ButterOrderStatusEnum.PENDING_INVENTORY)
+                .event(ButterOrderEventEnum.ALLOCATION_NO_INVENTORY)
+
+        ;
     }
 }
