@@ -7,7 +7,6 @@ import com.spring.microservices.dairyfactoryorderservice.repositories.CustomerRe
 import com.spring.microservices.model.ButterOrderDto;
 import com.spring.microservices.model.ButterOrderLineDto;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,7 +40,7 @@ public class ButterOrderScheduler {
     }
 
     @Transactional
-    @Scheduled(fixedRate = 2000) //run every 2 seconds
+//    @Scheduled(fixedRate = 2000) //run every 2 seconds
     public void placeOrder() {
 
         List<Customer> customerList = customerRepository.findAllByCustomerNameLike(ButterOrderBootStrap.TASTING_ROOM);

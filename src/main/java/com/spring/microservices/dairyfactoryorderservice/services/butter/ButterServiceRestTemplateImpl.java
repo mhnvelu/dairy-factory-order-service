@@ -12,8 +12,8 @@ import java.util.UUID;
 @ConfigurationProperties(prefix = "dairy.factory", ignoreUnknownFields = false)
 @Service
 public class ButterServiceRestTemplateImpl implements ButterService {
-    public final String BUTTER_PATH_V2 = "/api/v2/butter/";
-    public final String BUTTER_UPC_PATH_V2 = "/api/v2/butterUpc/";
+    public final static String BUTTER_PATH_V2 = "/api/v2/butter/";
+    public final static String BUTTER_UPC_PATH_V2 = "/api/v2/butterUpc/";
     private final RestTemplate restTemplate;
     private String butterServiceHost;
 

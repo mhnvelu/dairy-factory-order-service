@@ -13,6 +13,7 @@ import org.springframework.statemachine.state.State;
 import org.springframework.statemachine.support.StateMachineInterceptorAdapter;
 import org.springframework.statemachine.transition.Transition;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -25,6 +26,7 @@ public class ButterOrderStateMachineInterceptorAdapter
 
     private final ButterOrderRepository butterOrderRepository;
 
+    @Transactional
     @Override
     public void preStateChange(State<ButterOrderStatusEnum, ButterOrderEventEnum> state, Message<ButterOrderEventEnum> message,
                                Transition<ButterOrderStatusEnum, ButterOrderEventEnum> transition,
@@ -32,10 +34,10 @@ public class ButterOrderStateMachineInterceptorAdapter
                                StateMachine<ButterOrderStatusEnum, ButterOrderEventEnum> rootStateMachine) {
         Optional.ofNullable(message).ifPresent(msg -> {
             Optional.ofNullable(
-                    String.class.cast(msg.getHeaders().getOrDefault(ButterOrderManagerImpl.BUTTER_ORDER_ID_HEADER, "")))
+                    UUID.class.cast(msg.getHeaders().getOrDefault(ButterOrderManagerImpl.BUTTER_ORDER_ID_HEADER, "")))
                     .ifPresent(orderId -> {
                         log.info("Saving state for Butter Order Id : " + orderId + " State : " + state.getId());
-                        ButterOrder butterOrder = butterOrderRepository.getOne(UUID.fromString(orderId));
+                        ButterOrder butterOrder = butterOrderRepository.getOne(orderId);
                         butterOrder.setOrderStatus(state.getId());
                         butterOrderRepository.saveAndFlush(butterOrder);
                     });

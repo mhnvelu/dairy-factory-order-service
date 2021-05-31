@@ -27,8 +27,8 @@ public class AllocateButterOrderAction implements Action<ButterOrderStatusEnum, 
 
     @Override
     public void execute(StateContext<ButterOrderStatusEnum, ButterOrderEventEnum> context) {
-        String orderId = (String) context.getMessageHeaders().getOrDefault(ButterOrderManagerImpl.BUTTER_ORDER_ID_HEADER, "");
-        ButterOrder butterOrder = butterOrderRepository.getOne(UUID.fromString(orderId));
+        UUID orderId = (UUID) context.getMessageHeaders().getOrDefault(ButterOrderManagerImpl.BUTTER_ORDER_ID_HEADER, "");
+        ButterOrder butterOrder = butterOrderRepository.getOne(orderId);
         log.info("Sending AllocateButterOrderRequestEvent to ALLOCATE_ORDER_REQUEST_QUEUE for Butter Order : " + orderId);
         jmsTemplate.convertAndSend(JmsConfig.ALLOCATE_ORDER_REQUEST_QUEUE,
                                    AllocateButterOrderRequestEvent.builder()

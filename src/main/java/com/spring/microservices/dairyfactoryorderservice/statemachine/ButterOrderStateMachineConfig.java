@@ -41,9 +41,10 @@ public class ButterOrderStateMachineConfig extends StateMachineConfigurerAdapter
             throws Exception {
         transitions.withExternal().source(ButterOrderStatusEnum.NEW).target(ButterOrderStatusEnum.VALIDATION_PENDING)
                 .event(ButterOrderEventEnum.VALIDATE_ORDER).action(validateButterOrderAction)
-                .and().withExternal().source(ButterOrderStatusEnum.NEW).target(ButterOrderStatusEnum.VALIDATED)
+                .and().withExternal().source(ButterOrderStatusEnum.VALIDATION_PENDING).target(ButterOrderStatusEnum.VALIDATED)
                 .event(ButterOrderEventEnum.VALIDATION_PASSED)
-                .and().withExternal().source(ButterOrderStatusEnum.NEW).target(ButterOrderStatusEnum.VALIDATION_EXCEPTION)
+                .and().withExternal().source(ButterOrderStatusEnum.VALIDATION_PENDING)
+                .target(ButterOrderStatusEnum.VALIDATION_EXCEPTION)
                 .event(ButterOrderEventEnum.VALIDATION_FAILED)
                 .and().withExternal().source(ButterOrderStatusEnum.VALIDATED).target(ButterOrderStatusEnum.ALLOCATION_PENDING)
                 .event(ButterOrderEventEnum.ALLOCATE_ORDER).action(allocateButterOrderAction)
@@ -55,6 +56,8 @@ public class ButterOrderStateMachineConfig extends StateMachineConfigurerAdapter
                 .and().withExternal().source(ButterOrderStatusEnum.ALLOCATION_PENDING)
                 .target(ButterOrderStatusEnum.PENDING_INVENTORY)
                 .event(ButterOrderEventEnum.ALLOCATION_NO_INVENTORY)
+                .and().withExternal().source(ButterOrderStatusEnum.ALLOCATED).target(ButterOrderStatusEnum.PICKED_UP)
+                .event(ButterOrderEventEnum.BUTTER_ORDER_PICKED_UP);
 
         ;
     }

@@ -16,4 +16,6 @@ public interface ButterOrderManager {
     void butterOrderAllocationPendingInventory(ButterOrderDto butterOrderDto);
 
     void butterOrderAllocationFailed(ButterOrderDto butterOrderDto);
+
+    void butterOrderPickedUp(UUID orderId);
 }

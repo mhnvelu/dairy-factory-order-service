@@ -21,8 +21,7 @@ public class ValidateButterOrderResponseEventListener {
     public void listenValidateButterOrderResponseEvent(ValidateButterOrderResponseEvent validateButterOrderResponseEvent) {
         final UUID orderId = validateButterOrderResponseEvent.getOrderId();
         log.info("Received ValidateButterOrderResponseEvent for Order : " + orderId);
-
-        butterOrderManager.processValidateButterOrderResponseEvent(orderId,validateButterOrderResponseEvent.isValid());
+        butterOrderManager.processValidateButterOrderResponseEvent(orderId, validateButterOrderResponseEvent.isValid());
     }
 
 

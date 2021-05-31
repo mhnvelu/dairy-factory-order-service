@@ -40,19 +40,23 @@ public class ButterOrderManagerImpl implements ButterOrderManager {
         butterOrder.setOrderStatus(ButterOrderStatusEnum.NEW);
         ButterOrder savedButterOrder = butterOrderRepository.save(butterOrder);
         sendButterOrderEvent(savedButterOrder, ButterOrderEventEnum.VALIDATE_ORDER);
+        awaitForStatus(butterOrder.getId(), ButterOrderStatusEnum.VALIDATED);
         return savedButterOrder;
     }
 
+    @Transactional
     @Override
     public void processValidateButterOrderResponseEvent(UUID orderId, boolean valid) {
-        ButterOrder butterOrder = butterOrderRepository.getOne(orderId);
-        if (valid) {
-            sendButterOrderEvent(butterOrder, ButterOrderEventEnum.VALIDATION_PASSED);
-            ButterOrder validatedButterOrder = butterOrderRepository.getOne(orderId);
-            sendButterOrderEvent(validatedButterOrder, ButterOrderEventEnum.ALLOCATE_ORDER);
-        } else {
-            sendButterOrderEvent(butterOrder, ButterOrderEventEnum.VALIDATION_FAILED);
-        }
+        Optional<ButterOrder> butterOrderOptional = butterOrderRepository.findById(orderId);
+        butterOrderOptional.ifPresentOrElse(butterOrder -> {
+            if (valid) {
+                sendButterOrderEvent(butterOrder, ButterOrderEventEnum.VALIDATION_PASSED);
+                ButterOrder validatedButterOrder = butterOrderRepository.getOne(orderId);
+                sendButterOrderEvent(validatedButterOrder, ButterOrderEventEnum.ALLOCATE_ORDER);
+            } else {
+                sendButterOrderEvent(butterOrder, ButterOrderEventEnum.VALIDATION_FAILED);
+            }
+        }, () -> log.error("Order Id Not Found : " + orderId));
     }
 
     @Override
@@ -87,6 +91,14 @@ public class ButterOrderManagerImpl implements ButterOrderManager {
             sendButterOrderEvent(butterOrder, ButterOrderEventEnum.ALLOCATION_FAILED);
         }, () -> log.error("Order Not Found. Id: " + butterOrderDto.getId()));
 
+    }
+
+    @Override
+    public void butterOrderPickedUp(UUID orderId) {
+        Optional<ButterOrder> butterOrderOptional = butterOrderRepository.findById(orderId);
+        butterOrderOptional.ifPresentOrElse(butterOrder -> {
+            sendButterOrderEvent(butterOrder, ButterOrderEventEnum.BUTTER_ORDER_PICKED_UP);
+        }, () -> log.error("Order Not Found. Id: " + orderId));
     }
 
     private void sendButterOrderEvent(ButterOrder butterOrder, ButterOrderEventEnum butterOrderEventEnum) {

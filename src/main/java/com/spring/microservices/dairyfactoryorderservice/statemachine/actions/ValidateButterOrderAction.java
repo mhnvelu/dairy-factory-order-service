@@ -32,8 +32,8 @@ public class ValidateButterOrderAction implements Action<ButterOrderStatusEnum, 
 
     @Override
     public void execute(StateContext<ButterOrderStatusEnum, ButterOrderEventEnum> context) {
-        String orderId = (String) context.getMessageHeaders().getOrDefault(ButterOrderManagerImpl.BUTTER_ORDER_ID_HEADER, "");
-        ButterOrder butterOrder = butterOrderRepository.getOne(UUID.fromString(orderId));
+        UUID orderId = (UUID) context.getMessageHeaders().getOrDefault(ButterOrderManagerImpl.BUTTER_ORDER_ID_HEADER, "");
+        ButterOrder butterOrder = butterOrderRepository.findById(orderId).get();
         log.info("Sending ValidateButterOrderRequestEvent to BUTTER_ORDER_VALIDATE_QUEUE for Butter Order : " + orderId);
         jmsTemplate.convertAndSend(JmsConfig.BUTTER_ORDER_VALIDATE_REQUEST_QUEUE,
                                    ValidateButterOrderRequestEvent.builder()

@@ -1,14 +1,16 @@
 package com.spring.microservices.model.events;
 
 import com.spring.microservices.model.ButterOrderDto;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 
-@RequiredArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor
 @Data
 @Builder
 public class ValidateButterOrderRequestEvent {
 
-    private final ButterOrderDto butterOrderDto;
+    private ButterOrderDto butterOrderDto;
 }

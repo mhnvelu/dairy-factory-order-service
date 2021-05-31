@@ -9,7 +9,6 @@ import com.spring.microservices.model.ButterOrderDto;
 import com.spring.microservices.model.ButterOrderPagedList;
 import com.spring.microservices.model.ButterOrderStatusEnum;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -27,15 +26,16 @@ public class ButterOrderServiceImpl implements ButterOrderService {
     private final ButterOrderRepository butterOrderRepository;
     private final CustomerRepository customerRepository;
     private final ButterOrderMapper butterOrderMapper;
-    private final ApplicationEventPublisher publisher;
+    private final ButterOrderManager butterOrderManager;
 
     public ButterOrderServiceImpl(ButterOrderRepository butterOrderRepository,
                                   CustomerRepository customerRepository,
-                                  ButterOrderMapper butterOrderMapper, ApplicationEventPublisher publisher) {
+                                  ButterOrderMapper butterOrderMapper, ButterOrderManager butterOrderManager) {
         this.butterOrderRepository = butterOrderRepository;
         this.customerRepository = customerRepository;
         this.butterOrderMapper = butterOrderMapper;
-        this.publisher = publisher;
+        this.butterOrderManager = butterOrderManager;
+
     }
 
     @Override
@@ -71,7 +71,7 @@ public class ButterOrderServiceImpl implements ButterOrderService {
 
             butterOrder.getButterOrderLines().forEach(line -> line.setButterOrder(butterOrder));
 
-            ButterOrder savedButterOrder = butterOrderRepository.saveAndFlush(butterOrder);
+            ButterOrder savedButterOrder = butterOrderManager.newButterOrder(butterOrder);
 
             log.debug("Saved Butter Order: " + savedButterOrder.getId());
 
@@ -88,9 +88,7 @@ public class ButterOrderServiceImpl implements ButterOrderService {
 
     @Override
     public void pickupOrder(UUID customerId, UUID orderId) {
-        ButterOrder butterOrder = getOrder(customerId, orderId);
-        butterOrder.setOrderStatus(ButterOrderStatusEnum.PICKED_UP);
-        butterOrderRepository.save(butterOrder);
+        butterOrderManager.butterOrderPickedUp(orderId);
     }
 
     private ButterOrder getOrder(UUID customerId, UUID orderId) {
