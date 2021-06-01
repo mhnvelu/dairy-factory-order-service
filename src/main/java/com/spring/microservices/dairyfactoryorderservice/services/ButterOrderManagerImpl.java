@@ -100,6 +100,14 @@ public class ButterOrderManagerImpl implements ButterOrderManager {
         }, () -> log.error("Order Not Found. Id: " + orderId));
     }
 
+    @Override
+    public void cancelOrder(UUID orderId) {
+        Optional<ButterOrder> butterOrderOptional = butterOrderRepository.findById(orderId);
+        butterOrderOptional.ifPresentOrElse(butterOrder -> {
+            sendButterOrderEvent(butterOrder, ButterOrderEventEnum.CANCEL_ORDER);
+        }, () -> log.error("Order Not Found. Id: " + orderId));
+    }
+
     @Transactional
     @Async
     protected void sendButterOrderEvent(ButterOrder butterOrder, ButterOrderEventEnum butterOrderEventEnum) {

@@ -18,4 +18,6 @@ public interface ButterOrderManager {
     void butterOrderAllocationFailed(ButterOrderDto butterOrderDto);
 
     void butterOrderPickedUp(UUID orderId);
+
+    void cancelOrder(UUID orderId);
 }
