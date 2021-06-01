@@ -2,6 +2,7 @@ package com.spring.microservices.dairyfactoryorderservice.statemachine;
 
 import com.spring.microservices.dairyfactoryorderservice.domain.ButterOrderEventEnum;
 import com.spring.microservices.dairyfactoryorderservice.statemachine.actions.AllocateButterOrderAction;
+import com.spring.microservices.dairyfactoryorderservice.statemachine.actions.AllocateFailureButterOrderAction;
 import com.spring.microservices.dairyfactoryorderservice.statemachine.actions.ValidateButterOrderAction;
 import com.spring.microservices.dairyfactoryorderservice.statemachine.actions.ValidateFailureButterOrderAction;
 import com.spring.microservices.model.ButterOrderStatusEnum;
@@ -24,6 +25,7 @@ public class ButterOrderStateMachineConfig extends StateMachineConfigurerAdapter
     private final ValidateButterOrderAction validateButterOrderAction;
     private final AllocateButterOrderAction allocateButterOrderAction;
     private final ValidateFailureButterOrderAction validateFailureButterOrderAction;
+    private final AllocateFailureButterOrderAction allocateFailureButterOrderAction;
 
     @Override
     public void configure(StateMachineStateConfigurer<ButterOrderStatusEnum, ButterOrderEventEnum> states) throws Exception {
@@ -54,7 +56,7 @@ public class ButterOrderStateMachineConfig extends StateMachineConfigurerAdapter
                 .event(ButterOrderEventEnum.ALLOCATION_SUCCESS)
                 .and().withExternal().source(ButterOrderStatusEnum.ALLOCATION_PENDING)
                 .target(ButterOrderStatusEnum.ALLOCATION_ERROR)
-                .event(ButterOrderEventEnum.ALLOCATION_FAILED)
+                .event(ButterOrderEventEnum.ALLOCATION_FAILED).action(allocateFailureButterOrderAction)
                 .and().withExternal().source(ButterOrderStatusEnum.ALLOCATION_PENDING)
                 .target(ButterOrderStatusEnum.PENDING_INVENTORY)
                 .event(ButterOrderEventEnum.ALLOCATION_NO_INVENTORY)

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.jenspiegsa.wiremockextension.WireMockExtension;
 import com.github.tomakehurst.wiremock.WireMockServer;
+import com.spring.microservices.dairyfactoryorderservice.config.JmsConfig;
 import com.spring.microservices.dairyfactoryorderservice.domain.ButterOrder;
 import com.spring.microservices.dairyfactoryorderservice.domain.ButterOrderLine;
 import com.spring.microservices.dairyfactoryorderservice.domain.Customer;
@@ -11,6 +12,7 @@ import com.spring.microservices.dairyfactoryorderservice.repositories.ButterOrde
 import com.spring.microservices.dairyfactoryorderservice.repositories.CustomerRepository;
 import com.spring.microservices.dairyfactoryorderservice.services.butter.ButterServiceRestTemplateImpl;
 import com.spring.microservices.model.ButterOrderStatusEnum;
+import com.spring.microservices.model.events.AllocateButterOrderFailureEvent;
 import com.spring.microservices.model.v2.ButterDtoV2;
 import com.spring.microservices.model.v2.ButterPagedList;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.jms.core.JmsTemplate;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -52,6 +55,10 @@ class ButterOrderManagerImplTestIT {
     // from spring context configured already
     @Autowired
     private ObjectMapper objectMapper;
+
+    // from spring context configured already
+    @Autowired
+    private JmsTemplate jmsTemplate;
 
     @BeforeEach
     void setUp() {
@@ -120,6 +127,49 @@ class ButterOrderManagerImplTestIT {
         await().untilAsserted(() -> {
             ButterOrder foundButterOrder = butterOrderRepository.findById(savedButterOrder.getId()).get();
             assertEquals(ButterOrderStatusEnum.PICKED_UP, foundButterOrder.getOrderStatus());
+        });
+    }
+
+    @Test
+    public void newOrderToAllocateError() throws JsonProcessingException, InterruptedException {
+        // given
+        ButterDtoV2 butterDtoV2 = ButterDtoV2.builder().id(butterId).upc("12345").build();
+        ButterPagedList butterPagedList = new ButterPagedList(Arrays.asList(butterDtoV2));
+        wireMockServer.stubFor(get(ButterServiceRestTemplateImpl.BUTTER_UPC_PATH_V2 + "12345")
+                                       .willReturn(okJson(objectMapper.writeValueAsString(butterDtoV2))));
+
+        ButterOrder butterOrder = createButterOrder();
+        butterOrder.setCustomerRef("allocation-error");
+        ButterOrder savedButterOrder = butterOrderManager.newButterOrder(butterOrder);
+        assertNotNull(savedButterOrder);
+
+        await().untilAsserted(() -> {
+            ButterOrder foundButterOrder = butterOrderRepository.findById(savedButterOrder.getId()).get();
+            assertEquals(ButterOrderStatusEnum.ALLOCATION_ERROR, foundButterOrder.getOrderStatus());
+        });
+
+        AllocateButterOrderFailureEvent allocateButterOrderFailureEvent = (AllocateButterOrderFailureEvent)
+                jmsTemplate.receiveAndConvert(JmsConfig.ALLOCATE_ORDER_FAILURE_QUEUE);
+        assertNotNull(allocateButterOrderFailureEvent);
+        assertEquals(allocateButterOrderFailureEvent.getOrderId(), savedButterOrder.getId());
+    }
+
+    @Test
+    public void newOrderToAllocatePending() throws JsonProcessingException, InterruptedException {
+        // given
+        ButterDtoV2 butterDtoV2 = ButterDtoV2.builder().id(butterId).upc("12345").build();
+        ButterPagedList butterPagedList = new ButterPagedList(Arrays.asList(butterDtoV2));
+        wireMockServer.stubFor(get(ButterServiceRestTemplateImpl.BUTTER_UPC_PATH_V2 + "12345")
+                                       .willReturn(okJson(objectMapper.writeValueAsString(butterDtoV2))));
+
+        ButterOrder butterOrder = createButterOrder();
+        butterOrder.setCustomerRef("partial-allocation");
+        ButterOrder savedButterOrder = butterOrderManager.newButterOrder(butterOrder);
+        assertNotNull(savedButterOrder);
+
+        await().untilAsserted(() -> {
+            ButterOrder foundButterOrder = butterOrderRepository.findById(savedButterOrder.getId()).get();
+            assertEquals(ButterOrderStatusEnum.PENDING_INVENTORY, foundButterOrder.getOrderStatus());
         });
     }
 

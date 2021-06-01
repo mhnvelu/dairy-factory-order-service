@@ -18,6 +18,8 @@ public class AllocateButterOrderRequestEventListener {
 
     @JmsListener(destination = JmsConfig.ALLOCATE_ORDER_REQUEST_QUEUE)
     public void listenAllocateButterOrderRequestEvent(AllocateButterOrderRequestEvent allocateButterOrderRequestEvent) {
+        boolean pendingInventory = false;
+        boolean allocationError = false;
         String orderId = allocateButterOrderRequestEvent.getButterOrderDto().getId().toString();
         log.info("Received AllocateButterOrderRequestEvent for order : " + orderId);
 
@@ -26,8 +28,17 @@ public class AllocateButterOrderRequestEventListener {
         });
 
         AllocateButterOrderResponseEvent.AllocateButterOrderResponseEventBuilder allocateButterOrderResponseEventBuilder =
-                AllocateButterOrderResponseEvent.builder().butterOrderDto(allocateButterOrderRequestEvent.getButterOrderDto())
-                        .pendingInventory(false).allocationError(false);
+                AllocateButterOrderResponseEvent.builder().butterOrderDto(allocateButterOrderRequestEvent.getButterOrderDto());
+
+        String customerRef = allocateButterOrderRequestEvent.getButterOrderDto().getCustomerRef();
+        if (customerRef != null && customerRef.equals("allocation-error")) {
+            allocateButterOrderResponseEventBuilder.pendingInventory(false).allocationError(true);
+        } else if (customerRef != null && customerRef.equals("partial-allocation")) {
+            allocateButterOrderResponseEventBuilder.pendingInventory(true).allocationError(false);
+        } else {
+            allocateButterOrderResponseEventBuilder.pendingInventory(false).allocationError(false);
+        }
+
 
         jmsTemplate.convertAndSend(JmsConfig.ALLOCATE_ORDER_RESPONSE_QUEUE, allocateButterOrderResponseEventBuilder.build());
 
