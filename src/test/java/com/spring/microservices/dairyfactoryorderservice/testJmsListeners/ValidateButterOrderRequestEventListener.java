@@ -18,11 +18,17 @@ public class ValidateButterOrderRequestEventListener {
 
     @JmsListener(destination = JmsConfig.BUTTER_ORDER_VALIDATE_REQUEST_QUEUE)
     public void listenValidationButterOrderRequest(ValidateButterOrderRequestEvent validateButterOrderRequestEvent) {
+        boolean isValid = true;
+
+        if (validateButterOrderRequestEvent.getButterOrderDto().getCustomerRef() != null &&
+            validateButterOrderRequestEvent.getButterOrderDto().getCustomerRef().equals("fail-validation")) {
+            isValid = false;
+        }
         log.info("Received ValidateButterOrderRequestEvent order Id : " +
                  validateButterOrderRequestEvent.getButterOrderDto().getId());
 
         jmsTemplate.convertAndSend(JmsConfig.BUTTER_ORDER_VALIDATE_RESPONSE_QUEUE,
-                                   ValidateButterOrderResponseEvent.builder().isValid(true)
+                                   ValidateButterOrderResponseEvent.builder().isValid(isValid)
                                            .orderId(validateButterOrderRequestEvent.getButterOrderDto().getId()).build());
     }
 }

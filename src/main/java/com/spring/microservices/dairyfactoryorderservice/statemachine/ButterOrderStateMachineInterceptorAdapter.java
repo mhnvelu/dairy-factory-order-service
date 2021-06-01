@@ -37,7 +37,7 @@ public class ButterOrderStateMachineInterceptorAdapter
                     UUID.class.cast(msg.getHeaders().getOrDefault(ButterOrderManagerImpl.BUTTER_ORDER_ID_HEADER, "")))
                     .ifPresent(orderId -> {
                         log.info("Saving state for Butter Order Id : " + orderId + " State : " + state.getId());
-                        ButterOrder butterOrder = butterOrderRepository.getOne(orderId);
+                        ButterOrder butterOrder = butterOrderRepository.findById(orderId).get();
                         butterOrder.setOrderStatus(state.getId());
                         butterOrderRepository.saveAndFlush(butterOrder);
                     });

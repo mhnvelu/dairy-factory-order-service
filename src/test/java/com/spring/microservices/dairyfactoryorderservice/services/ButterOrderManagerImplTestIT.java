@@ -74,8 +74,53 @@ class ButterOrderManagerImplTestIT {
             ButterOrder foundButterOrder = butterOrderRepository.findById(savedButterOrder.getId()).get();
             assertEquals(ButterOrderStatusEnum.ALLOCATED, foundButterOrder.getOrderStatus());
         });
+    }
 
 
+    @Test
+    public void failedValidation() throws JsonProcessingException, InterruptedException {
+        // given
+        ButterDtoV2 butterDtoV2 = ButterDtoV2.builder().id(butterId).upc("12345").build();
+        ButterPagedList butterPagedList = new ButterPagedList(Arrays.asList(butterDtoV2));
+        wireMockServer.stubFor(get(ButterServiceRestTemplateImpl.BUTTER_UPC_PATH_V2 + "12345")
+                                       .willReturn(okJson(objectMapper.writeValueAsString(butterDtoV2))));
+
+        ButterOrder butterOrder = createButterOrder();
+        butterOrder.setCustomerRef("fail-validation");
+        ButterOrder savedButterOrder = butterOrderManager.newButterOrder(butterOrder);
+        assertNotNull(savedButterOrder);
+
+        await().untilAsserted(() -> {
+            ButterOrder foundButterOrder = butterOrderRepository.findById(savedButterOrder.getId()).get();
+            assertEquals(ButterOrderStatusEnum.VALIDATION_EXCEPTION, foundButterOrder.getOrderStatus());
+        });
+
+    }
+
+
+    @Test
+    public void newOrderToPickup() throws JsonProcessingException, InterruptedException {
+        // given
+        ButterDtoV2 butterDtoV2 = ButterDtoV2.builder().id(butterId).upc("12345").build();
+        ButterPagedList butterPagedList = new ButterPagedList(Arrays.asList(butterDtoV2));
+        wireMockServer.stubFor(get(ButterServiceRestTemplateImpl.BUTTER_UPC_PATH_V2 + "12345")
+                                       .willReturn(okJson(objectMapper.writeValueAsString(butterDtoV2))));
+
+        ButterOrder butterOrder = createButterOrder();
+        ButterOrder savedButterOrder = butterOrderManager.newButterOrder(butterOrder);
+        assertNotNull(savedButterOrder);
+
+        await().untilAsserted(() -> {
+            ButterOrder foundButterOrder = butterOrderRepository.findById(savedButterOrder.getId()).get();
+            assertEquals(ButterOrderStatusEnum.ALLOCATED, foundButterOrder.getOrderStatus());
+        });
+
+        butterOrderManager.butterOrderPickedUp(savedButterOrder.getId());
+
+        await().untilAsserted(() -> {
+            ButterOrder foundButterOrder = butterOrderRepository.findById(savedButterOrder.getId()).get();
+            assertEquals(ButterOrderStatusEnum.PICKED_UP, foundButterOrder.getOrderStatus());
+        });
     }
 
     private ButterOrder createButterOrder() {

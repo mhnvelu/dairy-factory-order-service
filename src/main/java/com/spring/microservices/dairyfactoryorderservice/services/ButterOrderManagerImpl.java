@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.statemachine.StateMachine;
 import org.springframework.statemachine.config.StateMachineFactory;
 import org.springframework.statemachine.support.DefaultStateMachineContext;
@@ -32,15 +33,13 @@ public class ButterOrderManagerImpl implements ButterOrderManager {
     private final StateMachineFactory<ButterOrderStatusEnum, ButterOrderEventEnum> stateMachineFactory;
     private final ButterOrderStateMachineInterceptorAdapter butterOrderStateMachineInterceptorAdapter;
 
-    @Transactional
     @Override
     public ButterOrder newButterOrder(ButterOrder butterOrder) {
 
         butterOrder.setId(null);
         butterOrder.setOrderStatus(ButterOrderStatusEnum.NEW);
-        ButterOrder savedButterOrder = butterOrderRepository.save(butterOrder);
+        ButterOrder savedButterOrder = butterOrderRepository.saveAndFlush(butterOrder);
         sendButterOrderEvent(savedButterOrder, ButterOrderEventEnum.VALIDATE_ORDER);
-        awaitForStatus(butterOrder.getId(), ButterOrderStatusEnum.VALIDATED);
         return savedButterOrder;
     }
 
@@ -51,7 +50,7 @@ public class ButterOrderManagerImpl implements ButterOrderManager {
         butterOrderOptional.ifPresentOrElse(butterOrder -> {
             if (valid) {
                 sendButterOrderEvent(butterOrder, ButterOrderEventEnum.VALIDATION_PASSED);
-                ButterOrder validatedButterOrder = butterOrderRepository.getOne(orderId);
+                ButterOrder validatedButterOrder = butterOrderRepository.findById(orderId).get();
                 sendButterOrderEvent(validatedButterOrder, ButterOrderEventEnum.ALLOCATE_ORDER);
             } else {
                 sendButterOrderEvent(butterOrder, ButterOrderEventEnum.VALIDATION_FAILED);
@@ -101,7 +100,9 @@ public class ButterOrderManagerImpl implements ButterOrderManager {
         }, () -> log.error("Order Not Found. Id: " + orderId));
     }
 
-    private void sendButterOrderEvent(ButterOrder butterOrder, ButterOrderEventEnum butterOrderEventEnum) {
+    @Transactional
+    @Async
+    protected void sendButterOrderEvent(ButterOrder butterOrder, ButterOrderEventEnum butterOrderEventEnum) {
 
         StateMachine<ButterOrderStatusEnum, ButterOrderEventEnum> stateMachine = buildStateMachine(butterOrder);
         Message message = MessageBuilder.withPayload(butterOrderEventEnum).setHeader(BUTTER_ORDER_ID_HEADER,
