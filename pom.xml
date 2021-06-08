@@ -25,7 +25,7 @@
         <org.mapstruct.version>1.4.2.Final</org.mapstruct.version>
         <awaitility.version>4.1.0</awaitility.version>
         <spring-cloud.version>2020.0.3</spring-cloud.version>
-        <docker.image.prefix>microservices-project</docker.image.prefix>
+        <docker.image.prefix>mhnvelu</docker.image.prefix>
         <docker.image.name>${project.artifactId}</docker.image.name>
     </properties>
 
